@@ -11,6 +11,15 @@
 
 {% block content %}
 
+{# Staging only: the layout under test comes from ?l=, set before the wall
+   is parsed so the page never paints the wrong one first. #}
+<script>
+  (function () {
+    var l = new URLSearchParams(location.search).get("l");
+    if (l) document.documentElement.dataset.layout = l;
+  })();
+</script>
+
 {# The ledger head, like /cenik: this page is read for its contents, and the
    contents are pictures. Under the full head the first painting began at
    y 626 of an 800px screen — the page about the work opened on 18% work. #}
@@ -60,7 +69,7 @@
     <a class="works__item rv" href="{{ big(painting.url) }}"
        data-lb-item data-batch-item data-state="sale"
        data-title="{{ painting.title }}" data-tag="K prodeji"
-       style="--d:{{ (loop.index0 % 12) * 25 }}ms"
+       style="--d:{{ (loop.index0 % 12) * 25 }}ms; --r:{{ ratio(painting.url) }}"
        aria-label="{{ painting.title }}">
       <div class="works__fig" aria-hidden="true">
         {# The first row is the page's first screen, and lazy it queued behind
@@ -130,7 +139,7 @@
     <a class="works__item rv" href="{{ big(painting.url) }}"
        data-lb-item data-batch-item data-state="sold"
        data-title="{{ painting.title }}" data-tag="Prodáno"
-       style="--d:{{ (loop.index0 % 12) * 25 }}ms"
+       style="--d:{{ (loop.index0 % 12) * 25 }}ms; --r:{{ ratio(painting.url) }}"
        aria-label="{{ painting.title }} — prodáno">
       <div class="works__fig" aria-hidden="true">
         {{ img(painting.url, alt=painting.title,
@@ -154,5 +163,22 @@
 {% endif %}
 
 {% if not for_sale %}{{ studio_close }}{% endif %}
+
+<nav class="lay" aria-label="Varianty zobrazení">
+  <span class="lay__label">Varianta</span>
+  <a href="?" data-l="">Současná</a>
+  <a href="?l=rady" data-l="rady">Řady</a>
+  <a href="?l=salon" data-l="salon">Salon</a>
+  <a href="?l=vystava" data-l="vystava">Výstava</a>
+  <a href="?l=stena" data-l="stena">Stěna</a>
+</nav>
+<script>
+  (function () {
+    var l = document.documentElement.dataset.layout || "";
+    document.querySelectorAll(".lay a").forEach(function (a) {
+      if (a.dataset.l === l) a.setAttribute("aria-current", "page");
+    });
+  })();
+</script>
 
 {% endblock %}
