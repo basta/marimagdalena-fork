@@ -6239,3 +6239,16 @@ body.is-lb .nav {
 .skip:focus-visible {
   transform: none;
 }
+
+/* Paintings-only variant. The images are now the canvas alone, cut out of the
+   room mockups, so a 4:5 cover crop would cut into the work itself. Each
+   painting shows whole, standing on the caption line like works hung to a
+   common sill. */
+.works .works__fig img,
+.reel .works__fig img {
+  object-fit: contain;
+  object-position: center bottom;
+  /* The inline average colour would fill the empty sides of the frame as
+     coloured bars beside every canvas. */
+  background-color: transparent !important;
+}
